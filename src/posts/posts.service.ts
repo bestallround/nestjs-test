@@ -8,6 +8,22 @@ import { UpdatePostDto } from './dto/update-post.dto.js';
 export class PostsService {
   constructor(private readonly prisma: PrismaService) {}
 
+  findAll() {
+    return this.prisma.post.findMany({
+      orderBy: { id: 'asc' },
+    });
+  }
+
+  async findOne(id: number) {
+    const post = await this.prisma.post.findUnique({
+      where: { id },
+    });
+    if (!post) {
+      throw new NotFoundException(`Post ${id} not found`);
+    }
+    return post;
+  }
+
   create(createPostDto: CreatePostDto) {
     return this.prisma.post.create({
       data: {
